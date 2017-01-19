@@ -159,7 +159,7 @@ def shell_handler(msg):
         p = Popen(e3Command, stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
         dprint(1, stdout)
-        dprint(1, sterr)
+        dprint(1, stderr)
         stdout.split('\n')
         
         userOut = []
@@ -341,7 +341,7 @@ execution_count = 1
 p = Popen("e3 set config showOutputFileLocation = True", stdout=PIPE, stderr=PIPE, shell=True)
 stdout, stderr = p.communicate()
 dprint(1, stdout)
-dprint(1, sterr)
+dprint(1, stderr)
         
 
 
