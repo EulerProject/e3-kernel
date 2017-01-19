@@ -148,25 +148,25 @@ def shell_handler(msg):
         dprint(1, "e3 kernel Executing:", pformat(msg['content']["code"]))
         print(sys.path)
 
-	# --> send busy response
+    # --> send busy response
         content = {
             'execution_state': "busy",
         }
         send(iopub_stream, 'status', content, parent_header=msg['header'])
         #################################
 
-	import e3_parse
-	import e3_io	
-	commandProvider = e3_parse.CommandProvider()
-	command = commandProvider.provide(msg['content']['code'])
+        import e3_parse
+        import e3_io    
+        commandProvider = e3_parse.CommandProvider()
+        command = commandProvider.provide(msg['content']['code'])
         if command != None:
             try:
-               command.run()
-               e3_io.append_project_history(input, command)
+                command.run()
+                e3_io.append_project_history(input, command)
             except Exception as e:
-               dprint(1, "Something went wrong: " + str(e))
+                dprint(1, "Something went wrong: " + str(e))
         else:
-             dprint(1, "Unrecognized command")
+            dprint(1, "Unrecognized command")
 
         #######################################################################
         content = {
@@ -185,12 +185,12 @@ def shell_handler(msg):
         if command != None:
             if command.get_output():
                 result = '\n'.join(command.get_output())
-    	content = {
-        	'execution_count': execution_count,
-            	'data': {"text/plain": result},
-            	'metadata': {}
-        	}
-	send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
+        content = {
+            'execution_count': execution_count,
+            'data': {"text/plain": result},
+            'metadata': {}
+        }
+        send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
         #######################################################################
         result = ""
         if command != None:
@@ -198,26 +198,24 @@ def shell_handler(msg):
                 for file in command.get_execute_output():
                     file = file.split(' ')[1]
                     if file.endswith('.svg'):
-                       with open(file) as f: 
+                        with open(file) as f: 
                             image = f.read()
-                       content = {
-                         	'execution_count': execution_count,
-            	                'data': {"image/svg+xml": image},
-            	                'metadata': {}
-                         	}
-	               send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
-		    if file.endswith('.pdf'):
-                       with open(file) as f: 
-                            image = f.read()
-                       content = {
-                         	'execution_count': execution_count,
-            	                'data': {"application/pdf": image},
-            	                'metadata': {}
-                         	}
-	               send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
-                
+                            content = {
+                                'execution_count': execution_count,
+                                'data': {"image/svg+xml": image},
+                                'metadata': {}
+                            }
+                            send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
+            if file.endswith('.pdf'):
+                with open(file) as f: 
+                    image = f.read()
+                    content = {
+                        'execution_count': execution_count,
+                        'data': {"application/pdf": image},
+                        'metadata': {}
+                    }
+                    send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
         #######################################################################
-
         content = {
             'execution_state': "idle",
         }
