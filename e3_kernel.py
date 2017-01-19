@@ -146,7 +146,7 @@ def shell_handler(msg):
 
     if msg['header']["msg_type"] == "execute_request":
         dprint(1, "e3 kernel Executing:", pformat(msg['content']["code"]))
-	print(sys.path)
+        print(sys.path)
 
 	# --> send busy response
         content = {
