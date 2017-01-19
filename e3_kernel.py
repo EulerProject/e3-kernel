@@ -155,7 +155,7 @@ def shell_handler(msg):
         }
         send(iopub_stream, 'status', content, parent_header=msg['header'])
         #################################
-        e3Command = "e3 " + msg['content']['code'] + " --show-files"
+        e3Command = "e3 " + msg['content']['code']
         p = Popen(e3Command, stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
         stdout = stdout.decode()
