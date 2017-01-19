@@ -158,14 +158,15 @@ def shell_handler(msg):
         e3Command = "e3 " + msg['content']['code'] + " --show-files"
         p = Popen(e3Command, stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
+        stdout = stdout.decode()
+        stderr = stderr.decode()
         dprint(1, stdout)
         dprint(1, stderr)
-        stdout.split('\n')
         
         userOut = []
         filesOut = []
         files = False
-        for line in stdout:
+        for line in stdout.split('\n'):
             if line == "Files:":
                 files = True
                 continue
@@ -199,7 +200,6 @@ def shell_handler(msg):
         result = ""
         if filesOut:
             for file in filesOut:
-                file = file.split(' ')[1]
                 if file.endswith('.svg'):
                     with open(file) as f: 
                         image = f.read()
