@@ -18,6 +18,7 @@ from pprint import pformat
 import zmq
 from zmq.eventloop import ioloop, zmqstream
 from zmq.error import ZMQError
+from subprocess import Popen, PIPE, call
 
 PYTHON3 = sys.version_info.major == 3
 
@@ -154,20 +155,25 @@ def shell_handler(msg):
         }
         send(iopub_stream, 'status', content, parent_header=msg['header'])
         #################################
-
-        import e3_parse
-        import e3_io    
-        commandProvider = e3_parse.CommandProvider()
-        command = commandProvider.provide(msg['content']['code'])
-        if command != None:
-            try:
-                command.run()
-                e3_io.append_project_history(input, command)
-            except Exception as e:
-                dprint(1, "Something went wrong: " + str(e))
-        else:
-            dprint(1, "Unrecognized command")
-
+        e3Command = "e3 " + msg['content']['code'] + " --show-files"
+        p = Popen(e3Command, stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+        dprint(1, stdout)
+        dprint(1, sterr)
+        stdout.split('\n')
+        
+        userOut = []
+        filesOut = []
+        files = False
+        for line in stdout:
+            if line == "Files:":
+                files = True
+                continue
+            if files:
+                filesOut.append(line)
+            else:
+                userOut.append(line)
+                
         #######################################################################
         content = {
             'execution_count': execution_count,
@@ -181,40 +187,37 @@ def shell_handler(msg):
         #}
         #send(iopub_stream, 'stream', content, parent_header=msg['header'])
         #######################################################################
-        result = ""
-        if command != None:
-            if command.get_output():
-                result = '\n'.join(command.get_output())
         content = {
             'execution_count': execution_count,
-            'data': {"text/plain": result},
+            'data': {"text/plain": '\n'.join(userOut)},
             'metadata': {}
         }
         send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
         #######################################################################
+        
+        
         result = ""
-        if command != None:
-            if command.get_execute_output():
-                for file in command.get_execute_output():
-                    file = file.split(' ')[1]
-                    if file.endswith('.svg'):
-                        with open(file) as f: 
-                            image = f.read()
-                            content = {
-                                'execution_count': execution_count,
-                                'data': {"image/svg+xml": image},
-                                'metadata': {}
-                            }
-                            send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
-            if file.endswith('.pdf'):
-                with open(file) as f: 
-                    image = f.read()
-                    content = {
-                        'execution_count': execution_count,
-                        'data': {"application/pdf": image},
-                        'metadata': {}
-                    }
-                    send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
+        if filesOut:
+            for file in filesOut:
+                file = file.split(' ')[1]
+                if file.endswith('.svg'):
+                    with open(file) as f: 
+                        image = f.read()
+                        content = {
+                            'execution_count': execution_count,
+                            'data': {"image/svg+xml": image},
+                            'metadata': {}
+                        }
+                        send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
+                if file.endswith('.pdf'):
+                    with open(file) as f: 
+                        image = f.read()
+                        content = {
+                            'execution_count': execution_count,
+                            'data': {"application/pdf": image},
+                            'metadata': {}
+                        }
+                        send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
         #######################################################################
         content = {
             'execution_state': "idle",
@@ -332,6 +335,15 @@ auth = hmac.HMAC(
     secure_key,
     digestmod=signature_schemes[config["signature_scheme"]])
 execution_count = 1
+
+##########################################
+# Configure e3:
+p = Popen("e3 set config showOutputFileLocation = True", stdout=PIPE, stderr=PIPE, shell=True)
+stdout, stderr = p.communicate()
+dprint(1, stdout)
+dprint(1, sterr)
+        
+
 
 ##########################################
 # Heartbeat:
