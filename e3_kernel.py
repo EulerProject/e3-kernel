@@ -34,16 +34,13 @@ engine_id = str(uuid.uuid4())
 config = {}
 
 def copy_file_to_notebook_dir(code, file):
-    dprint(1, "copy")
     filename = os.path.basename(file)
     tapId = os.path.basename(os.path.dirname(os.path.dirname(file)))
-    dprint(1, tapId)
     type = "misc"
     outputTypes = ["graph tap", "graph summary", "graph ambiguity", "graph worlds", "graph four in one", "graph inconsistency"]
     for outputType in outputTypes:
         if code.startswith(outputType):
             type = outputType
-    dprint(1, type)
     #if code.startswith("graph tap"):
     #    outputType = "graph tap"
     #elif code.startswith("graph summary"):
@@ -58,13 +55,11 @@ def copy_file_to_notebook_dir(code, file):
     #    pass
     
     #newpath = r'C:\Program Files\arbitrary' 
-    destination = os.path.join(config['notebook_dir'], tapId, type)
-    dprint(1, destination)
+    destination = os.path.join(config['notebook_dir'], 'taps', tapId, type)
     if not os.path.exists(destination):
         os.makedirs(destination)
     dprint(1, "copy now from " + file + " to " + os.path.join(destination, filename))
     copyfile(file, os.path.join(destination, filename))
-    dprint(1, "done copying")
 
 # Utility functions:
 def shutdown():
