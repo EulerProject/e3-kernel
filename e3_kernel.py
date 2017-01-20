@@ -31,11 +31,12 @@ DELIM = b"<IDS|MSG>"
 debug_level = 3 # 0 (none) to 3 (all) for various levels of detail
 exiting = False
 engine_id = str(uuid.uuid4())
+config = {}
 
 def copy_file_to_notebook_dir(code, file):
     dprint(1, "copy")
     filename = os.path.basename(file)
-    tapId = os.path.dirname(os.path.dirname(file))
+    tapId = os.path.basename(os.path.dirname(os.path.dirname(file)))
     dprint(1, tapId)
     type = "misc"
     outputTypes = ["graph tap", "graph summary", "graph ambiguity", "graph worlds", "graph four in one", "graph inconsistency"]
