@@ -19,6 +19,9 @@ import zmq
 from zmq.eventloop import ioloop, zmqstream
 from zmq.error import ZMQError
 from subprocess import Popen, PIPE, call
+from shutil import copyfile
+import os
+
 
 PYTHON3 = sys.version_info.major == 3
 
@@ -28,6 +31,33 @@ DELIM = b"<IDS|MSG>"
 debug_level = 3 # 0 (none) to 3 (all) for various levels of detail
 exiting = False
 engine_id = str(uuid.uuid4())
+
+def copy_file_to_notebook_dir(code, file):
+    filename = os.path.basename(file)
+    tapId = os.path.dirname(os.path.dirname(file))
+    type = "misc"
+    outputTypes = ["graph tap", "graph summary", "graph ambiguity", "graph worlds", "graph four in one", "graph inconsistency"]
+    for outputType in outputTypes:
+        if code.startswith(outputType):
+            type = outputType
+    #if code.startswith("graph tap"):
+    #    outputType = "graph tap"
+    #elif code.startswith("graph summary"):
+    #    outputType = "graph summary"
+    #elif code.startswith("graph ambiguity"):
+    #    pass
+    #elif code.startswith("graph worlds"):
+    #    pass
+    #elif code.startswith("graph four in one"):
+    #    pass
+    #elif code.startswith("graph inconsistency"):
+    #    pass
+    
+    #newpath = r'C:\Program Files\arbitrary' 
+    destination = os.path.join(config['notebook_dir'], tapId, type)
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+    copyfile(file, os.path.join(destination, filename))
 
 # Utility functions:
 def shutdown():
@@ -155,7 +185,8 @@ def shell_handler(msg):
         }
         send(iopub_stream, 'status', content, parent_header=msg['header'])
         #################################
-        e3Command = "e3 " + msg['content']['code']
+        code = msg['content']['code']
+        e3Command = "e3 " + code
         p = Popen(e3Command, stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
         stdout = stdout.decode()
@@ -201,6 +232,7 @@ def shell_handler(msg):
         if filesOut:
             for file in filesOut:
                 if file.endswith('.svg'):
+                    copy_file_to_notebook_dir(code, file)
                     with open(file) as f: 
                         image = f.read()
                         content = {
@@ -210,14 +242,16 @@ def shell_handler(msg):
                         }
                         send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
                 if file.endswith('.pdf'):
-                    with open(file) as f: 
-                        image = f.read()
-                        content = {
-                            'execution_count': execution_count,
-                            'data': {"application/pdf": image},
-                            'metadata': {}
-                        }
-                        send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
+                    copy_file_to_notebook_dir(code, file)
+                    
+                    #with open(file) as f: 
+                    #    image = f.read()
+                    #    content = {
+                    #        'execution_count': execution_count,
+                    #        'data': {"application/pdf": image},
+                    #        'metadata': {}
+                    #    }
+                    #    send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
         #######################################################################
         content = {
             'execution_state': "idle",
@@ -327,6 +361,11 @@ else:
         'stdin_port'        : 0,
         'transport'         : 'tcp'
     }
+
+if len(sys.argv > 2):
+    config['notebook_dir'] = sys.argv[2]
+else:
+    config['notebook_dir'] = os.path.expanduser("~")
 
 connection = config["transport"] + "://" + config["ip"]
 secure_key = str_to_bytes(config["key"])
