@@ -362,7 +362,7 @@ else:
         'transport'         : 'tcp'
     }
 
-if len(sys.argv > 2):
+if len(sys.argv) > 2:
     config['notebook_dir'] = sys.argv[2]
 else:
     config['notebook_dir'] = os.path.expanduser("~")
