@@ -35,6 +35,8 @@ config = {}
 
 def copy_file_to_notebook_dir(code, file):
     filename = os.path.basename(file)
+    if filename.startswith(".cleantax_"):
+        filename = filename.replace(".cleantax_", "", 1)
     tapId = os.path.basename(os.path.dirname(os.path.dirname(file)))
     type = "misc"
     outputTypes = ["graph tap", "graph summary", "graph ambiguity", "graph worlds", "graph four in one", "graph inconsistency"]
