@@ -191,8 +191,8 @@ def shell_handler(msg):
         #################################
         code = msg['content']['code']
         e3Command = "e3 " + code
-        eCommand.replace('(', '\(')
-        eCommand.replace(')', '\)')
+        e3Command.replace('(', '\(')
+        e3Command.replace(')', '\)')
         p = Popen(e3Command, stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
         stdout = stdout.decode()
