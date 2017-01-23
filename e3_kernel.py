@@ -37,7 +37,7 @@ def copy_file_to_notebook_dir(code, file):
     filename = os.path.basename(file)
     if filename.startswith(".cleantax_"):
         filename = filename.replace(".cleantax_", "", 1)
-    tapId = os.path.basename(os.path.dirname(os.path.dirname(file)))
+    tapNameAndId = os.path.basename(os.path.dirname(os.path.dirname(file)))
     type = "misc"
     outputTypes = ["graph tap", "graph summary", "graph ambiguity", "graph worlds", "graph four in one", "graph inconsistency"]
     for outputType in outputTypes:
@@ -57,7 +57,7 @@ def copy_file_to_notebook_dir(code, file):
     #    pass
     
     #newpath = r'C:\Program Files\arbitrary' 
-    destination = os.path.join(config['notebook_dir'], 'taps', tapId, type)
+    destination = os.path.join(config['notebook_dir'], 'taps', tapNameAndId, type)
     if not os.path.exists(destination):
         os.makedirs(destination)
     dprint(1, "copy now from " + file + " to " + os.path.join(destination, filename))
