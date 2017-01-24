@@ -193,12 +193,14 @@ def shell_handler(msg):
         e3Command = "e3 " + code
         
         #escape characters of e3 commands that bash does not like
-        e3Command = e3Command.replace(' "', ' \'"')
-        e3Command = e3Command.replace('^"', '\'"')
-        e3Command = e3Command.replace('"$', '"\'')
-        e3Command = e3Command.replace('" ', '"\' ')
+        match = re.match('^.*(".*").*$', e3Command)
+        if match:
+            term = match.group(1)
+            replacement = "'" + term + "'"
+            e3Command = e3Command.replace(term, replacement)
         e3Command = e3Command.replace('(', '\(')
         e3Command = e3Command.replace(')', '\)')
+        dprint(1, "e3Command: " + e3Command)
         p = Popen(e3Command, stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
         stdout = stdout.decode()
