@@ -193,6 +193,7 @@ def shell_handler(msg):
         e3Command = "e3 " + code
         
         #escape characters of e3 commands that bash does not like
+        import re
         match = re.match('^.*(".*").*$', e3Command)
         if match:
             term = match.group(1)
