@@ -392,6 +392,11 @@ execution_count = 1
 
 ##########################################
 # Configure e3:
+p = Popen("e3 reset", stdout=PIPE, stderr=PIPE, shell=True)
+stdout, stderr = p.communicate()
+dprint(1, stdout)
+dprint(1, stderr)
+
 p = Popen("e3 set config showOutputFileLocation = True", stdout=PIPE, stderr=PIPE, shell=True)
 stdout, stderr = p.communicate()
 dprint(1, stdout)
