@@ -247,7 +247,7 @@ def shell_handler(msg):
         if filesOut:
             for file in filesOut:
                 if file.endswith('.svg'):
-                    copy_file_to_notebook_dir(code, file)
+                    #copy_file_to_notebook_dir(code, file)
                     with open(file) as f: 
                         image = f.read()
                         content = {
@@ -256,8 +256,8 @@ def shell_handler(msg):
                             'metadata': {}
                         }
                         send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
-                if file.endswith('.pdf'):
-                    copy_file_to_notebook_dir(code, file)
+                #if file.endswith('.pdf'):
+                    #copy_file_to_notebook_dir(code, file)
                     
                     #with open(file) as f: 
                     #    image = f.read()
@@ -392,7 +392,7 @@ execution_count = 1
 
 ##########################################
 # Configure e3:
-p = Popen("e3 set config showOutputFileLocation = False", stdout=PIPE, stderr=PIPE, shell=True)
+p = Popen("e3 set config showOutputFileLocation = True", stdout=PIPE, stderr=PIPE, shell=True)
 stdout, stderr = p.communicate()
 dprint(1, stdout)
 dprint(1, stderr)
