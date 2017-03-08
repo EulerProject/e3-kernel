@@ -35,8 +35,8 @@ config = {}
 
 def copy_file_to_notebook_dir(code, file):
     filename = os.path.basename(file)
-    if filename.startswith(".cleantax_"):
-        filename = filename.replace(".cleantax_", "", 1)
+    if filename.startswith("cleantax_"):
+        filename = filename.replace("cleantax_", "", 1)
     tapNameAndId = os.path.basename(os.path.dirname(os.path.dirname(file)))
     type = "misc"
     outputTypes = ["graph tap", "graph summary", "graph ambiguity", "graph worlds", "graph four in one", "graph inconsistency"]
@@ -392,10 +392,10 @@ execution_count = 1
 
 ##########################################
 # Configure e3:
-#p = Popen("e3 reset", stdout=PIPE, stderr=PIPE, shell=True)
-#stdout, stderr = p.communicate()
-#dprint(1, stdout)
-#dprint(1, stderr)
+p = Popen("e3 clear history", stdout=PIPE, stderr=PIPE, shell=True)
+stdout, stderr = p.communicate()
+dprint(1, stdout)
+dprint(1, stderr)
 
 p = Popen("e3 set config showOutputFileLocation = True", stdout=PIPE, stderr=PIPE, shell=True)
 stdout, stderr = p.communicate()
