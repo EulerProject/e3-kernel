@@ -188,6 +188,11 @@ def shell_handler(msg):
         stdout, stderr = p.communicate()
         dprint(1, stdout)
         dprint(1, stderr)
+        ### Force svg output image file format
+        p = Popen("e3 set config imageFormat = svg", stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+        dprint(1, stdout)
+        dprint(1, stderr)
 
     # --> send busy response
         content = {
