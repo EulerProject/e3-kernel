@@ -182,6 +182,12 @@ def shell_handler(msg):
     if msg['header']["msg_type"] == "execute_request":
         dprint(1, "e3 kernel Executing:", pformat(msg['content']["code"]))
         print(sys.path)
+        #### In case of user's change of configration or reset:
+        ### Force showOutputFileLocation config parameter to assure kernel's display of images to work correctly
+        p = Popen("e3 set config showOutputFileLocation = True", stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+        dprint(1, stdout)
+        dprint(1, stderr)
 
     # --> send busy response
         content = {
