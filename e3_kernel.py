@@ -209,7 +209,7 @@ def shell_handler(msg):
         stdout, stderr = p.communicate()
         dprint(1, stdout)
         dprint(1, stderr)
-        maxWorldsToShow = sys.maxint
+        maxWorldsToShow = sys.maxsize
         for line in stdout.split("\n"):
             if line.strip().startswith("maxWorldsToShow"):
                 try:
