@@ -211,8 +211,8 @@ def shell_handler(msg):
         dprint(1, stderr)
         maxWorldsToShow = sys.maxsize
         for line in stdout.splitlines():
-            dbprint(1, line)
-            dbprint(1, line.strip())
+            dprint(1, line)
+            dprint(1, line.strip())
             if line.strip().startswith("maxWorldsToShow"):
                 try:
                     dprint(1, line.strip().split(":")[1].strip())
