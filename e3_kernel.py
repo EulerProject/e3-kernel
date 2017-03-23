@@ -193,7 +193,29 @@ def shell_handler(msg):
         stdout, stderr = p.communicate()
         dprint(1, stdout)
         dprint(1, stderr)
-
+        p = Popen("e3 set config euler2Executable = euler2", stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+        dprint(1, stdout)
+        dprint(1, stderr)
+        p = Popen("e3 set config htmlViewer = euler2", stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+        dprint(1, stdout)
+        dprint(1, stderr)
+        p = Popen("e3 set config imageViewer = euler2", stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+        dprint(1, stdout)
+        dprint(1, stderr)
+        p = Popen("e3 print config", stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+        dprint(1, stdout)
+        dprint(1, stderr)
+        maxWorldsToShow = sys.maxint
+        for line in stdout.split("\n"):
+            if line.strip().startswith("maxWorldsToShow"):
+                try:
+                    maxWorldsToShow = int(line.strip().split(":")[1].strip())
+                except ValueError:
+                    pass
     # --> send busy response
         content = {
             'execution_state': "busy",
@@ -256,17 +278,22 @@ def shell_handler(msg):
         
         result = ""
         if filesOut:
+            svgsShown = 0
             for file in filesOut:
                 if file.endswith('.svg'):
-                    #copy_file_to_notebook_dir(code, file)
-                    with open(file) as f: 
-                        image = f.read()
-                        content = {
-                            'execution_count': execution_count,
-                            'data': {"image/svg+xml": image},
-                            'metadata': {}
-                        }
-                        send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
+                    if svgsShown < maxWorldsToShow:
+                        #copy_file_to_notebook_dir(code, file)
+                        with open(file) as f: 
+                            image = f.read()
+                            content = {
+                                'execution_count': execution_count,
+                                'data': {"image/svg+xml": image},
+                                'metadata': {}
+                            }
+                            send(iopub_stream, 'execute_result', content, parent_header=msg['header'])
+                        svgsShown = svgsShown + 1
+                    else:
+                        break
                 #if file.endswith('.pdf'):
                     #copy_file_to_notebook_dir(code, file)
                     
@@ -407,12 +434,6 @@ execution_count = 1
 #stdout, stderr = p.communicate()
 #dprint(1, stdout)
 #dprint(1, stderr)
-
-p = Popen("e3 set config showOutputFileLocation = True", stdout=PIPE, stderr=PIPE, shell=True)
-stdout, stderr = p.communicate()
-dprint(1, stdout)
-dprint(1, stderr)
-        
 
 
 ##########################################
