@@ -197,11 +197,11 @@ def shell_handler(msg):
         stdout, stderr = p.communicate()
         dprint(1, stdout)
         dprint(1, stderr)
-        p = Popen("e3 set config htmlViewer = euler2", stdout=PIPE, stderr=PIPE, shell=True)
+        p = Popen("e3 set config htmlViewer = xdg-open {file}", stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
         dprint(1, stdout)
         dprint(1, stderr)
-        p = Popen("e3 set config imageViewer = euler2", stdout=PIPE, stderr=PIPE, shell=True)
+        p = Popen("e3 set config imageViewer = xdg-open {file}", stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = p.communicate()
         dprint(1, stdout)
         dprint(1, stderr)
@@ -211,13 +211,13 @@ def shell_handler(msg):
         dprint(1, stderr)
         maxWorldsToShow = sys.maxsize
         for line in stdout.decode("utf-8").splitlines():
-            dprint(1, line)
-            dprint(1, line.strip())
             if line.strip().startswith("maxWorldsToShow"):
                 try:
-                    dprint(1, line.strip().split(":")[1].strip())
+                    dprint(1, "maxWorldsToShow1: " + line.strip().split(":")[1].strip())
                     maxWorldsToShow = int(line.strip().split(":")[1].strip())
+                    dprint(1, "maxWorldsToShow: " + maxWorldsToShow)
                 except ValueError:
+                    dprint(1, "valueError")
                     pass
     # --> send busy response
         content = {
