@@ -213,11 +213,8 @@ def shell_handler(msg):
         for line in stdout.decode("utf-8").splitlines():
             if line.strip().startswith("maxWorldsToShow"):
                 try:
-                    dprint(1, "maxWorldsToShow1: " + line.strip().split(":")[1].strip())
                     maxWorldsToShow = int(line.strip().split(":")[1].strip())
-                    dprint(1, "maxWorldsToShow: " + maxWorldsToShow)
                 except ValueError:
-                    dprint(1, "valueError")
                     pass
     # --> send busy response
         content = {
